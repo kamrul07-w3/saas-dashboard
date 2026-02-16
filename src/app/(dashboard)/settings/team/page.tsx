@@ -39,10 +39,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { PageHeader } from "@/components/shared/page-header";
 import { FormSkeleton } from "@/components/shared/loading-skeleton";
+import { UserAvatar } from "@/components/shared/user-avatar";
 import type { TeamWithMembers, UserProfile } from "@/types";
 import { ROLES, DATE_FORMAT } from "@/lib/constants";
 
@@ -239,14 +239,10 @@ export default function TeamSettingsPage() {
                 <TableRow key={member.id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <Avatar className="size-8">
-                        <AvatarImage
-                          src={member.user.image || undefined}
-                        />
-                        <AvatarFallback className="text-xs">
-                          {member.user.name?.[0]?.toUpperCase() || "U"}
-                        </AvatarFallback>
-                      </Avatar>
+                      <UserAvatar
+                        name={member.user.name}
+                        image={member.user.image}
+                      />
                       <div>
                         <p className="text-sm font-medium">
                           {member.user.name || "Unnamed"}

@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { BellRing } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -87,34 +88,43 @@ export default function NotificationSettingsPage() {
         description="Choose how you want to be notified"
       />
 
-      <Card className="max-w-2xl">
+      <Card className="max-w-2xl shadow-sm">
         <CardHeader>
-          <CardTitle>Preferences</CardTitle>
-          <CardDescription>
-            Toggle your notification preferences below.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {preferences.map((pref) => (
-            <div
-              key={pref.key}
-              className="flex items-center justify-between"
-            >
-              <div className="space-y-0.5">
-                <Label htmlFor={pref.key}>{pref.label}</Label>
-                <p className="text-muted-foreground text-sm">
-                  {pref.description}
-                </p>
-              </div>
-              <Switch
-                id={pref.key}
-                checked={prefs?.[pref.key] ?? false}
-                onCheckedChange={(checked) =>
-                  mutation.mutate({ [pref.key]: checked })
-                }
-              />
+          <div className="flex items-center gap-3">
+            <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10">
+              <BellRing className="size-4 text-primary" />
             </div>
-          ))}
+            <div>
+              <CardTitle className="text-base">Preferences</CardTitle>
+              <CardDescription>
+                Toggle your notification preferences below.
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="divide-y">
+            {preferences.map((pref) => (
+              <div
+                key={pref.key}
+                className="flex items-center justify-between py-4 first:pt-0 last:pb-0"
+              >
+                <div className="space-y-0.5 pr-4">
+                  <Label htmlFor={pref.key} className="text-sm font-medium">{pref.label}</Label>
+                  <p className="text-muted-foreground text-sm">
+                    {pref.description}
+                  </p>
+                </div>
+                <Switch
+                  id={pref.key}
+                  checked={prefs?.[pref.key] ?? false}
+                  onCheckedChange={(checked) =>
+                    mutation.mutate({ [pref.key]: checked })
+                  }
+                />
+              </div>
+            ))}
+          </div>
         </CardContent>
       </Card>
     </div>

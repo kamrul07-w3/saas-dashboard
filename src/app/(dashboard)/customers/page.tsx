@@ -168,6 +168,7 @@ function CustomersContent() {
           totalPages={data?.meta?.totalPages ?? 1}
           onPageChange={setPage}
           onRowClick={(item) => router.push(`/customers/${item.id}`)}
+          showColumnToggle
         />
       )}
     </div>

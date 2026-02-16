@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
+import { User, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,7 +16,6 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { PageHeader } from "@/components/shared/page-header";
 
 const profileSchema = z.object({
@@ -95,12 +95,22 @@ export default function AccountSettingsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Account Settings" description="Manage your account" />
+      <PageHeader
+        title="Account Settings"
+        description="Manage your profile and security preferences"
+      />
 
-      <Card className="max-w-2xl">
+      <Card className="max-w-2xl shadow-sm">
         <CardHeader>
-          <CardTitle>Profile</CardTitle>
-          <CardDescription>Update your personal information.</CardDescription>
+          <div className="flex items-center gap-3">
+            <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10">
+              <User className="size-4 text-primary" />
+            </div>
+            <div>
+              <CardTitle className="text-base">Profile</CardTitle>
+              <CardDescription>Update your personal information.</CardDescription>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <form
@@ -109,7 +119,7 @@ export default function AccountSettingsPage() {
           >
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
-              <Input id="name" {...profileForm.register("name")} />
+              <Input id="name" className="max-w-md" {...profileForm.register("name")} />
               {profileForm.formState.errors.name && (
                 <p className="text-destructive text-sm">
                   {profileForm.formState.errors.name.message}
@@ -121,28 +131,37 @@ export default function AccountSettingsPage() {
               <Input
                 id="email"
                 type="email"
+                className="max-w-md"
                 {...profileForm.register("email")}
                 disabled
               />
+              <p className="text-muted-foreground text-xs">
+                Contact support to change your email address.
+              </p>
             </div>
             <Button
               type="submit"
               disabled={profileForm.formState.isSubmitting}
             >
-              {profileForm.formState.isSubmitting ? "Saving..." : "Save"}
+              {profileForm.formState.isSubmitting ? "Saving..." : "Save changes"}
             </Button>
           </form>
         </CardContent>
       </Card>
 
-      <Separator className="max-w-2xl" />
-
-      <Card className="max-w-2xl">
+      <Card className="max-w-2xl shadow-sm">
         <CardHeader>
-          <CardTitle>Change Password</CardTitle>
-          <CardDescription>
-            Update your password to keep your account secure.
-          </CardDescription>
+          <div className="flex items-center gap-3">
+            <div className="flex size-9 items-center justify-center rounded-lg bg-amber-500/10">
+              <Lock className="size-4 text-amber-600 dark:text-amber-400" />
+            </div>
+            <div>
+              <CardTitle className="text-base">Change Password</CardTitle>
+              <CardDescription>
+                Update your password to keep your account secure.
+              </CardDescription>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <form
@@ -154,6 +173,7 @@ export default function AccountSettingsPage() {
               <Input
                 id="currentPassword"
                 type="password"
+                className="max-w-md"
                 {...passwordForm.register("currentPassword")}
               />
               {passwordForm.formState.errors.currentPassword && (
@@ -167,6 +187,7 @@ export default function AccountSettingsPage() {
               <Input
                 id="newPassword"
                 type="password"
+                className="max-w-md"
                 {...passwordForm.register("newPassword")}
               />
               {passwordForm.formState.errors.newPassword && (
@@ -180,6 +201,7 @@ export default function AccountSettingsPage() {
               <Input
                 id="confirmPassword"
                 type="password"
+                className="max-w-md"
                 {...passwordForm.register("confirmPassword")}
               />
               {passwordForm.formState.errors.confirmPassword && (

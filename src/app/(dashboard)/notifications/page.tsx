@@ -30,9 +30,16 @@ const typeIcons: Record<string, React.ElementType> = {
 
 const typeColors: Record<string, string> = {
   [NOTIFICATION_TYPES.INFO]: "text-blue-500",
-  [NOTIFICATION_TYPES.WARNING]: "text-yellow-500",
-  [NOTIFICATION_TYPES.SUCCESS]: "text-green-500",
+  [NOTIFICATION_TYPES.WARNING]: "text-amber-500",
+  [NOTIFICATION_TYPES.SUCCESS]: "text-emerald-500",
   [NOTIFICATION_TYPES.ERROR]: "text-red-500",
+};
+
+const typeBgColors: Record<string, string> = {
+  [NOTIFICATION_TYPES.INFO]: "bg-blue-500/10",
+  [NOTIFICATION_TYPES.WARNING]: "bg-amber-500/10",
+  [NOTIFICATION_TYPES.SUCCESS]: "bg-emerald-500/10",
+  [NOTIFICATION_TYPES.ERROR]: "bg-red-500/10",
 };
 
 export default function NotificationsPage() {
@@ -120,17 +127,20 @@ export default function NotificationsPage() {
           {notifications.map((notification) => {
             const Icon = typeIcons[notification.type] || Info;
             const color = typeColors[notification.type] || "text-blue-500";
+            const bgColor = typeBgColors[notification.type] || "bg-blue-500/10";
 
             return (
               <Card
                 key={notification.id}
                 className={cn(
-                  "transition-colors",
-                  !notification.read && "bg-accent/50"
+                  "transition-all duration-200 hover:shadow-sm",
+                  !notification.read && "border-l-4 border-l-primary bg-accent/30"
                 )}
               >
                 <CardContent className="flex items-start gap-4 py-4">
-                  <Icon className={cn("mt-0.5 size-5 shrink-0", color)} />
+                  <div className={cn("mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg", bgColor)}>
+                    <Icon className={cn("size-4", color)} />
+                  </div>
                   <div className="min-w-0 flex-1">
                     <p
                       className={cn(
@@ -140,10 +150,10 @@ export default function NotificationsPage() {
                     >
                       {notification.title}
                     </p>
-                    <p className="text-muted-foreground text-sm">
+                    <p className="text-muted-foreground text-sm mt-0.5">
                       {notification.message}
                     </p>
-                    <p className="text-muted-foreground mt-1 text-xs">
+                    <p className="text-muted-foreground mt-1.5 text-xs">
                       {format(new Date(notification.createdAt), "MMM dd, HH:mm")}
                     </p>
                   </div>
@@ -156,6 +166,7 @@ export default function NotificationsPage() {
                           markReadMutation.mutate(notification.id)
                         }
                         title="Mark as read"
+                        className="text-muted-foreground hover:text-foreground"
                       >
                         <Check className="size-4" />
                       </Button>
@@ -167,6 +178,7 @@ export default function NotificationsPage() {
                         deleteMutation.mutate(notification.id)
                       }
                       title="Delete"
+                      className="text-muted-foreground hover:text-destructive"
                     >
                       <Trash2 className="size-4" />
                     </Button>

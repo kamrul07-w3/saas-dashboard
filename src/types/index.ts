@@ -70,6 +70,19 @@ export interface CustomerInfo {
   teamId: string;
 }
 
+// Admin user types
+export interface AdminUserInfo {
+  id: string;
+  name: string | null;
+  email: string;
+  image: string | null;
+  isActive: boolean;
+  role: Role;
+  memberId: string;
+  createdAt: string;
+  joinedAt: string;
+}
+
 // Dashboard types
 export interface DashboardStats {
   totalCustomers: number;

@@ -73,6 +73,25 @@ export const inviteMemberSchema = z.object({
   role: z.enum(["ADMIN", "MEMBER"]).default("MEMBER"),
 });
 
+// ─── Admin User Schemas ─────────────────────────────────────
+
+export const adminCreateUserSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  role: z.enum(["ADMIN", "MEMBER"]).default("MEMBER"),
+});
+
+export const adminUpdateUserSchema = z.object({
+  name: z.string().min(2).optional(),
+  email: z.string().email().optional(),
+  role: z.enum(["ADMIN", "MEMBER"]).optional(),
+});
+
+export const adminResetPasswordSchema = z.object({
+  password: z.string().min(8, "Password must be at least 8 characters"),
+});
+
 // ─── API Key Schema ──────────────────────────────────────────
 
 export const createApiKeySchema = z.object({
@@ -103,5 +122,8 @@ export type CreateTeamInput = z.infer<typeof createTeamSchema>;
 export type UpdateTeamInput = z.infer<typeof updateTeamSchema>;
 export type InviteMemberInput = z.infer<typeof inviteMemberSchema>;
 export type CreateApiKeyInput = z.infer<typeof createApiKeySchema>;
+export type AdminCreateUserInput = z.infer<typeof adminCreateUserSchema>;
+export type AdminUpdateUserInput = z.infer<typeof adminUpdateUserSchema>;
+export type AdminResetPasswordInput = z.infer<typeof adminResetPasswordSchema>;
 export type PaginationInput = z.infer<typeof paginationSchema>;
 export type DateRangeInput = z.infer<typeof dateRangeSchema>;

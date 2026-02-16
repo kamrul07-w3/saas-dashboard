@@ -9,13 +9,23 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowUpDown, ArrowUp, ArrowDown, SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 export interface Column<T> {
   key: string;
   header: string;
   sortable?: boolean;
+  hideable?: boolean;
   render?: (item: T) => React.ReactNode;
 }
 
@@ -26,6 +36,7 @@ interface DataTableProps<T> {
   totalPages?: number;
   onPageChange?: (page: number) => void;
   onRowClick?: (item: T) => void;
+  showColumnToggle?: boolean;
 }
 
 export function DataTable<T extends Record<string, unknown>>({
@@ -35,9 +46,11 @@ export function DataTable<T extends Record<string, unknown>>({
   totalPages = 1,
   onPageChange,
   onRowClick,
+  showColumnToggle = false,
 }: DataTableProps<T>) {
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [hiddenColumns, setHiddenColumns] = useState<Set<string>>(new Set());
 
   const handleSort = (key: string) => {
     if (sortKey === key) {
@@ -47,6 +60,21 @@ export function DataTable<T extends Record<string, unknown>>({
       setSortDir("asc");
     }
   };
+
+  const toggleColumn = (key: string) => {
+    setHiddenColumns((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      return next;
+    });
+  };
+
+  const visibleColumns = columns.filter((col) => !hiddenColumns.has(col.key));
+  const hideableColumns = columns.filter((col) => col.hideable !== false);
 
   const sortedData = sortKey
     ? [...data].sort((a, b) => {
@@ -63,15 +91,40 @@ export function DataTable<T extends Record<string, unknown>>({
 
   return (
     <div>
-      <div className="rounded-md border">
+      {showColumnToggle && hideableColumns.length > 0 && (
+        <div className="flex justify-end pb-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                <SlidersHorizontal className="mr-2 size-4" />
+                Columns
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {hideableColumns.map((col) => (
+                <DropdownMenuCheckboxItem
+                  key={col.key}
+                  checked={!hiddenColumns.has(col.key)}
+                  onCheckedChange={() => toggleColumn(col.key)}
+                >
+                  {col.header}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      )}
+      <div className="rounded-lg border shadow-sm overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow>
-              {columns.map((col) => (
-                <TableHead key={col.key}>
+            <TableRow className="bg-muted/50 hover:bg-muted/50">
+              {visibleColumns.map((col) => (
+                <TableHead key={col.key} className="font-semibold text-xs uppercase tracking-wider">
                   {col.sortable ? (
                     <button
-                      className="flex items-center gap-1 hover:text-foreground"
+                      className="flex items-center gap-1.5 hover:text-foreground transition-colors"
                       onClick={() => handleSort(col.key)}
                     >
                       {col.header}
@@ -82,7 +135,7 @@ export function DataTable<T extends Record<string, unknown>>({
                           <ArrowDown className="size-3" />
                         )
                       ) : (
-                        <ArrowUpDown className="size-3 opacity-50" />
+                        <ArrowUpDown className="size-3 opacity-40" />
                       )}
                     </button>
                   ) : (
@@ -96,20 +149,23 @@ export function DataTable<T extends Record<string, unknown>>({
             {sortedData.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
+                  colSpan={visibleColumns.length}
+                  className="h-24 text-center text-muted-foreground"
                 >
-                  No results.
+                  No results found.
                 </TableCell>
               </TableRow>
             ) : (
               sortedData.map((item, i) => (
                 <TableRow
                   key={i}
-                  className={onRowClick ? "cursor-pointer" : ""}
+                  className={cn(
+                    "transition-colors",
+                    onRowClick && "cursor-pointer hover:bg-accent/50"
+                  )}
                   onClick={() => onRowClick?.(item)}
                 >
-                  {columns.map((col) => (
+                  {visibleColumns.map((col) => (
                     <TableCell key={col.key}>
                       {col.render
                         ? col.render(item)
@@ -123,42 +179,44 @@ export function DataTable<T extends Record<string, unknown>>({
         </Table>
       </div>
       {totalPages > 1 && onPageChange && (
-        <div className="flex items-center justify-end gap-2 py-4">
-          <Button
-            variant="outline"
-            size="icon-sm"
-            onClick={() => onPageChange(1)}
-            disabled={page <= 1}
-          >
-            <ChevronsLeft className="size-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon-sm"
-            onClick={() => onPageChange(page - 1)}
-            disabled={page <= 1}
-          >
-            <ChevronLeft className="size-4" />
-          </Button>
+        <div className="flex items-center justify-between py-4">
           <span className="text-muted-foreground text-sm">
             Page {page} of {totalPages}
           </span>
-          <Button
-            variant="outline"
-            size="icon-sm"
-            onClick={() => onPageChange(page + 1)}
-            disabled={page >= totalPages}
-          >
-            <ChevronRight className="size-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon-sm"
-            onClick={() => onPageChange(totalPages)}
-            disabled={page >= totalPages}
-          >
-            <ChevronsRight className="size-4" />
-          </Button>
+          <div className="flex items-center gap-1.5">
+            <Button
+              variant="outline"
+              size="icon-sm"
+              onClick={() => onPageChange(1)}
+              disabled={page <= 1}
+            >
+              <ChevronsLeft className="size-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon-sm"
+              onClick={() => onPageChange(page - 1)}
+              disabled={page <= 1}
+            >
+              <ChevronLeft className="size-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon-sm"
+              onClick={() => onPageChange(page + 1)}
+              disabled={page >= totalPages}
+            >
+              <ChevronRight className="size-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon-sm"
+              onClick={() => onPageChange(totalPages)}
+              disabled={page >= totalPages}
+            >
+              <ChevronsRight className="size-4" />
+            </Button>
+          </div>
         </div>
       )}
     </div>

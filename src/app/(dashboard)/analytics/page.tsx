@@ -5,7 +5,7 @@ import { useState } from "react";
 import { format } from "date-fns";
 import type { DateRange } from "react-day-picker";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { PageHeader } from "@/components/shared/page-header";
 import { DateRangePicker } from "@/components/shared/date-range-picker";
 import { LineChart } from "@/components/charts/line-chart";
@@ -122,9 +122,10 @@ export default function AnalyticsPage() {
             </>
           ) : (
             <>
-              <Card>
+              <Card className="shadow-sm">
                 <CardHeader>
-                  <CardTitle>MRR / ARR</CardTitle>
+                  <CardTitle className="text-base font-semibold">MRR / ARR</CardTitle>
+                  <CardDescription>Monthly and annual recurring revenue trends</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <LineChart
@@ -144,9 +145,10 @@ export default function AnalyticsPage() {
                   />
                 </CardContent>
               </Card>
-              <Card>
+              <Card className="shadow-sm">
                 <CardHeader>
-                  <CardTitle>New vs Churned MRR</CardTitle>
+                  <CardTitle className="text-base font-semibold">New vs Churned MRR</CardTitle>
+                  <CardDescription>Revenue gained and lost each period</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <BarChart
@@ -178,9 +180,10 @@ export default function AnalyticsPage() {
             </>
           ) : (
             <>
-              <Card>
+              <Card className="shadow-sm">
                 <CardHeader>
-                  <CardTitle>DAU / WAU / MAU</CardTitle>
+                  <CardTitle className="text-base font-semibold">DAU / WAU / MAU</CardTitle>
+                  <CardDescription>Active user metrics over time</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <LineChart
@@ -205,9 +208,10 @@ export default function AnalyticsPage() {
                   />
                 </CardContent>
               </Card>
-              <Card>
+              <Card className="shadow-sm">
                 <CardHeader>
-                  <CardTitle>New Signups vs Churned Users</CardTitle>
+                  <CardTitle className="text-base font-semibold">New Signups vs Churned Users</CardTitle>
+                  <CardDescription>User acquisition and retention trends</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <BarChart
@@ -235,9 +239,10 @@ export default function AnalyticsPage() {
           {featuresLoading ? (
             <ChartSkeleton />
           ) : (
-            <Card>
+            <Card className="shadow-sm">
               <CardHeader>
-                <CardTitle>Top Features</CardTitle>
+                <CardTitle className="text-base font-semibold">Top Features</CardTitle>
+                <CardDescription>Most used features by usage count and unique users</CardDescription>
               </CardHeader>
               <CardContent>
                 <BarChart
